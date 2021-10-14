@@ -1,3 +1,10 @@
+const path = require('path');
+require('dotenv').config({
+  path: path.resolve(
+    process.cwd(),
+    process.env.NODE_ENV == 'production' ? '.env' : '.env.dev'
+  ),
+});
 const express = require('express');
 const cookie_parser = require('cookie-parser');
 const session = require('express-session');
