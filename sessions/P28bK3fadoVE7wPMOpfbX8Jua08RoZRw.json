@@ -1,0 +1,11 @@
+{
+  "cookie": {
+    "originalMaxAge": 10000,
+    "expires": "2021-10-17T09:37:01.921Z",
+    "secure": false,
+    "httpOnly": true,
+    "path": "/"
+  },
+  "num": 1,
+  "__lastAccess": 1634463411921
+}
