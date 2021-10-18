@@ -9,6 +9,8 @@ const express = require('express');
 const cookie_parser = require('cookie-parser');
 const session = require('express-session');
 
+const morgan = require('morgan');
+
 const redis = require('redis');
 
 const { AssertionError } = require('assert');
@@ -31,6 +33,7 @@ const REDIS_PORT = process.env.REDIS_PORT || 6379;
   let redis_client = redis.createClient(obj_redis_client_options);
   let redis_store = require('connect-redis')(session);
 
+  app.use(morgan('short'));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
   app.use(cookie_parser());
