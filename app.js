@@ -34,6 +34,9 @@ const REDIS_PORT = process.env.REDIS_PORT || 6379;
   let redis_store = require('connect-redis')(session);
 
   app.use(morgan('short'));
+  // app.use(morgan('common', {
+  //   stream: fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+  // }))
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
   app.use(cookie_parser());
@@ -68,6 +71,14 @@ const REDIS_PORT = process.env.REDIS_PORT || 6379;
 
   router.get('/signup', (req, res, next) => {
     'use strict';
+    const bool__is_login = req.session.user ? true : false;
+
+    if (bool__is_login) {
+      res.redirect(303, '/');
+    } else {
+      res.status(200)
+         .sendFile('')
+    }
   });
 
   router.get('/login', fn__wrap_async(async (req, res, next) => {
@@ -81,6 +92,16 @@ const REDIS_PORT = process.env.REDIS_PORT || 6379;
          .sendFile('login.html', { root: path.join(process.cwd(), 'public')});
     }
   }));
+
+  router.post('/api/auth/signup', fn__wrap_async(async (req, res, next) => {
+    'use strict';
+    if (req.session.user) {
+      res.redirect(303, '/');
+    }
+
+    const body = req.body;
+
+  }))
 
   router.post('/api/auth/login', fn__wrap_async(async (req, res, next) => {
     'use strict';
