@@ -1,3 +1,16 @@
+const express = require('express');
+const cookie_parser = require('cookie-parser');
+const session = require('express-session');
+
+
+const app = express();
+
+
+module.exports = app;
+
+
+
+
 const path = require('path');
 require('dotenv').config({
   path: path.resolve(
@@ -8,10 +21,13 @@ require('dotenv').config({
 const express = require('express');
 const cookie_parser = require('cookie-parser');
 const session = require('express-session');
+const passport = require('passport');
 
 const morgan = require('morgan');
+const flash = require('connect-flash');
 
 const redis = require('redis');
+const pg = require('pg');
 
 const { AssertionError } = require('assert');
 const { RedisError } = redis
@@ -22,7 +38,7 @@ const HOST = process.env.HOST || '127.0.0.1';
 const HTTP_PORT = process.env.HTTP_PORT || 80;
 const REDIS_PORT = process.env.REDIS_PORT || 6379;
 
-(() => {
+(async () => {
   const app = express();
   const router = express.Router();
 
@@ -33,13 +49,17 @@ const REDIS_PORT = process.env.REDIS_PORT || 6379;
   let redis_client = redis.createClient(obj_redis_client_options);
   let redis_store = require('connect-redis')(session);
 
+  const pg_client = new pg.Client();
+  await pg_client.connect();
+
   app.use(morgan('short'));
   // app.use(morgan('common', {
   //   stream: fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
   // }))
+
+  app.use(cookie_parser());
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
-  app.use(cookie_parser());
   app.use(session({
     key: 'login_data',
     secret: process.env.COOKIE_SECRET || '',
@@ -53,6 +73,8 @@ const REDIS_PORT = process.env.REDIS_PORT || 6379;
       secure: false,
     },
   }));
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   router.get('/', fn__wrap_async(async (req, res, next) => {
     'use strict';
