@@ -1,22 +1,21 @@
-const pino = require('pino');
 const express_pino = require('express-pino-logger');
-
-const dev_opts = {
-  prettyPrint: true,
-};
+const pino = require('pino');
 
 const NODE_ENV = process.env.NODE_ENV;
 
-let request_log;
+const dev_opts = {
+  prettyPrint: true,
+}
+
+let request_logger;
 let logger;
 
 if (NODE_ENV === 'production') {
-  request_log = express_pino();
-  logger = pino(dev_opts);
+  request_logger = express_pino();
+  logger = pino();
 } else {
   request_log = express_pino(dev_opts);
   logger = pino(dev_opts);
 }
 
-module.exports.request_log = request_log;
-module.exports.logger = logger;
+module.exports = { request_logger, logger };
